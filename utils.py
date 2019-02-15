@@ -42,8 +42,24 @@ EMPTY_FILLER = 1000
 # which is not guranteed
 def load_train_hdf(path):
     return pd.concat([
-        pd.read_hdf(os.path.join(path, "train_part_%i.hdf" % i))
+        pd.read_hdf(os.path.join(path, "train_part_%i_v2.hdf" % i))
         for i in (1, 2)], axis=0, ignore_index=True)
+
+def load_test_hdf(path):
+    return pd.read_hdf(os.path.join(path, "test_public_v2.hdf"))
+
+
+def load_full_train_csv(path):
+    converters = dict(zip(FOI_COLUMNS, repeat(parse_array)))
+    train = pd.concat(
+        [
+            pd.read_csv(os.path.join(path, "train_part_%i_v2.csv" % i), converters=converters, error_bad_lines=False, encoding='utf-8', skiprows=[7834149]) for i in (1, 2)
+        ],
+        axis=0,
+        ignore_index=True
+    )
+    test = pd.read_csv(os.path.join(path, "test_public_v2.csv"), converters=converters)
+    return train, test
 
 
 def load_data_csv(path, feature_columns):
